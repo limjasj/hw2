@@ -10,9 +10,9 @@ Movie::Movie(const std::string category, const std::string name, double price, i
 /**
   * Returns the appropriate keywords that this product should be associated with
   */
-std::set<string> Movie::keywords() const
+std::set<std::string> Movie::keywords() const
 {
-  std::set<string> keyWords=keyWords.parseStringToWords(name_);   //make title into separate words, put in new set
+  std::set<std::string> keyWords = parseStringToWords(name_);   //make title into separate words, put in new set
   keyWords.insert(genre_);           //add genre to set
   keyWords.insert(rating_);       //add rating to set
 
@@ -26,7 +26,7 @@ std::string Movie::displayString() const
 {
   std::string display= getName() + "\n" +
   "genre: " + genre_ + " rating: " + rating_ + "\n" +
-  getPrice() + " " + getQty() + " left.\n";
+  std::to_string(getPrice()) + " " + std::to_string(getQty()) + " left.\n";
 
   return display;
 }

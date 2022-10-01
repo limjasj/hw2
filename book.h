@@ -5,7 +5,7 @@
 
 class Book : public Product{
   public:
-    Book(const std::string category, const std::string name, double price, int qty, string isbn, string author);
+    Book(const std::string category, const std::string name, double price, int qty, std::string isbn, std::string author);
 
     /**
      * Returns the appropriate keywords that this product should be associated with
@@ -23,8 +23,9 @@ class Book : public Product{
     void dump(std::ostream& os) const;
 
   private:
-    std::string isbn_;
     std::string author_;
+    std::string isbn_;
+    
 };
 
 

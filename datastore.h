@@ -3,6 +3,8 @@
 #include <string>
 #include <set>
 #include <vector>
+#include <map>
+#include <deque>
 #include "product.h"
 #include "user.h"
 

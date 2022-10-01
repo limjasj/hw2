@@ -5,7 +5,7 @@
 
 class Movie : public Product{
   public:
-    Movie(const std::string category, const std::string name, double price, int qty, string genre, string rating);
+    Movie(const std::string category, const std::string name, double price, int qty, std::string genre, std::string rating);
 
     /**
      * Returns the appropriate keywords that this product should be associated with

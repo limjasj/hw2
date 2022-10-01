@@ -9,6 +9,7 @@
 #include "db_parser.h"
 #include "product_parser.h"
 #include "util.h"
+#include "mydatastore.h"
 
 using namespace std;
 struct ProdNameSorter {
@@ -29,8 +30,8 @@ int main(int argc, char* argv[])
      * Declare your derived DataStore object here replacing
      *  DataStore type to your derived type
      ****************/
-    DataStore ds;
-
+    //DataStore ds;
+    MyDataStore ds;
 
 
     // Instantiate the individual section and product parsers we want
@@ -67,48 +68,97 @@ int main(int argc, char* argv[])
         cout << "\nEnter command: " << endl;
         string line;
         getline(cin,line);
-        stringstream ss(line);
+        stringstream ss(line); //line(input) is in stringstream ss
         string cmd;
-        if((ss >> cmd)) {
-            if( cmd == "AND") {
-                string term;
-                vector<string> terms;
-                while(ss >> term) {
-                    term = convToLower(term);
-                    terms.push_back(term);
-                }
-                hits = ds.search(terms, 0);
-                displayProducts(hits);
+        if((ss >> cmd)) //takes out first work and allows us to see what it is
+        { 
+          if( cmd == "AND") {
+              string term;
+              vector<string> terms;
+              while(ss >> term) {
+                  term = convToLower(term);
+                  terms.push_back(term);
+              }
+              hits = ds.search(terms, 0);
+              displayProducts(hits);
+          }
+          else if ( cmd == "OR" ) {
+              string term;
+              vector<string> terms;
+              while(ss >> term) {
+                  term = convToLower(term);
+                  terms.push_back(term);
+              }
+              hits = ds.search(terms, 1);
+              displayProducts(hits);
+          }
+          else if ( cmd == "QUIT") {
+              string filename;
+              if(ss >> filename) {
+                  ofstream ofile(filename.c_str());
+                  ds.dump(ofile);
+                  ofile.close();
+              }
+              done = true;
+          }
+          /* Add support for other commands here */
+          else if ( cmd == "ADD")
+          {
+            //must add the index from hits to the cart
+            Product* indexProduct;
+            unsigned int index;
+            std::string username;
+            if((ss >> username) && (ss >> index)) //read the int and User* from ss
+            {
+              if((index<0) || (index > hits.size()))  //index is more than size, <0
+              {
+                std::cout << "Invalid request" << endl;
+              }
+              else
+              {
+                indexProduct=hits[index-1]; //pass in the product from hits
+                ds.addToCart(username, indexProduct); //use function from myDataStore
+              }
             }
-            else if ( cmd == "OR" ) {
-                string term;
-                vector<string> terms;
-                while(ss >> term) {
-                    term = convToLower(term);
-                    terms.push_back(term);
-                }
-                hits = ds.search(terms, 1);
-                displayProducts(hits);
+            else
+            {
+              std::cout << "Invalid request" << endl;
             }
-            else if ( cmd == "QUIT") {
-                string filename;
-                if(ss >> filename) {
-                    ofstream ofile(filename.c_str());
-                    ds.dump(ofile);
-                    ofile.close();
-                }
-                done = true;
+          }
+          else if ( cmd == "VIEWCART") //string to pass into function
+          {
+            std::string username;  //create a string to pass into function
+            if(ss >> username) //read in the string 
+            {
+              std::vector<Product*> displayVector = ds.viewCart(username); //call viewCart function
+              displayProducts(displayVector);
             }
-	    /* Add support for other commands here */
-
-
-
-
-            else {
-                cout << "Unknown command" << endl;
+            else
+            {
+              std::cout << "Invalid username" << endl;
             }
+          }
+          else if ( cmd == "BUYCART")
+          {
+            std::string username;  //create a string to pass into function
+            if(ss >> username) //read in the string
+            {
+              ds.buyCart(username); //call buyCart function
+            }
+            else
+            {
+              std::cout << "Invalid username" << endl;
+            }
+          }
+          else 
+          {
+              cout << "Unknown command" << endl;
+          }
         }
-
+      else 
+      {
+          cout << "Unknown command" << endl;
+      }
     }
     return 0;
 }
