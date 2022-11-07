@@ -18,6 +18,7 @@ struct ProdNameSorter {
     }
 };
 void displayProducts(vector<Product*>& hits);
+void displayProducts2(vector<Product*>& hits);
 
 int main(int argc, char* argv[])
 {
@@ -110,19 +111,26 @@ int main(int argc, char* argv[])
             std::string username;
             if((ss >> username) && (ss >> index)) //read the int and User* from ss
             {
-              if((index<0) || (index > hits.size()))  //index is more than size, <0
+              if(ds.userExists(username)) //check if user exists
               {
-                std::cout << "Invalid request" << endl;
+                if((index<0) || (index > hits.size()))  //index is more than size, <0
+                {
+                  cout << "Invalid request" << endl;
+                }
+                else
+                {
+                  indexProduct=hits[index-1]; //pass in the product from hits
+                  ds.addToCart(username, indexProduct); //use function from myDataStore
+                }
               }
               else
               {
-                indexProduct=hits[index-1]; //pass in the product from hits
-                ds.addToCart(username, indexProduct); //use function from myDataStore
+                cout<<"Invalid request \n";
               }
             }
             else
             {
-              std::cout << "Invalid request" << endl;
+              cout << "Invalid request" << endl;
             }
           }
           else if ( cmd == "VIEWCART") //string to pass into function
@@ -130,24 +138,38 @@ int main(int argc, char* argv[])
             std::string username;  //create a string to pass into function
             if(ss >> username) //read in the string 
             {
-              std::vector<Product*> displayVector = ds.viewCart(username); //call viewCart function
-              displayProducts(displayVector);
+              if(ds.userExists(username)) //check if user exists
+              {
+                std::vector<Product*> displayVector = ds.viewCart(username); //call viewCart function
+                displayProducts2(displayVector);
+              }
+              else
+              {
+                cout<<"Invalid Username \n";
+              }
             }
             else
             {
-              std::cout << "Invalid username" << endl;
+              cout << "Invalid username" << endl;
             }
           }
           else if ( cmd == "BUYCART")
           {
-            std::string username;  //create a string to pass into function
+            string username;  //create a string to pass into function
             if(ss >> username) //read in the string
             {
-              ds.buyCart(username); //call buyCart function
+              if(ds.userExists(username)) //check if user exists
+              {
+                ds.buyCart(username); //call buyCart function
+              }
+              else
+              {
+                cout<<"Invalid Username \n";
+              }
             }
             else
             {
-              std::cout << "Invalid username" << endl;
+              cout << "Invalid username" << endl;
             }
           }
           else 
@@ -173,6 +195,21 @@ void displayProducts(vector<Product*>& hits)
     std::sort(hits.begin(), hits.end(), ProdNameSorter());
     for(vector<Product*>::iterator it = hits.begin(); it != hits.end(); ++it) {
         cout << "Hit " << setw(3) << resultNo << endl;
+        cout << (*it)->displayString() << endl;
+        cout << endl;
+        resultNo++;
+    }
+}
+
+void displayProducts2(vector<Product*>& hits)
+{
+    int resultNo = 1;
+    if (hits.begin() == hits.end()) {
+    	cout << "No results found!" << endl;
+    	return;
+    }
+    for(vector<Product*>::iterator it = hits.begin(); it != hits.end(); ++it) {
+        cout << "Item " << resultNo << endl;
         cout << (*it)->displayString() << endl;
         cout << endl;
         resultNo++;

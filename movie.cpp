@@ -1,8 +1,8 @@
 #include "movie.h"
 
 Movie::Movie(const std::string category, const std::string name, double price, int qty, std::string genre, std::string rating): 
-  genre_(genre), rating_(rating),
-  Product(category, name, price, qty)
+  Product(category, name, price, qty),
+  genre_(genre), rating_(rating)
 {
 
 }
@@ -13,8 +13,8 @@ Movie::Movie(const std::string category, const std::string name, double price, i
 std::set<std::string> Movie::keywords() const
 {
   std::set<std::string> keyWords = parseStringToWords(name_);   //make title into separate words, put in new set
-  keyWords.insert(genre_);           //add genre to set
-  keyWords.insert(rating_);       //add rating to set
+  keyWords.insert(convToLower(genre_));           //add genre to set
+  keyWords.insert(convToLower(rating_));       //add rating to set
 
   return keyWords;    //return set
 }
@@ -25,7 +25,7 @@ std::set<std::string> Movie::keywords() const
 std::string Movie::displayString() const
 {
   std::string display= getName() + "\n" +
-  "genre: " + genre_ + " rating: " + rating_ + "\n" +
+  "Genre: " + genre_ + " Rating: " + rating_ + "\n" +
   std::to_string(getPrice()) + " " + std::to_string(getQty()) + " left.\n";
 
   return display;

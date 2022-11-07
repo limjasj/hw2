@@ -1,8 +1,8 @@
 #include "book.h"
 
 Book::Book(const std::string category, const std::string name, double price, int qty, std::string isbn, std::string author): 
-  isbn_(isbn), author_(author),
-  Product(category, name, price, qty)
+  Product(category, name, price, qty),
+  isbn_(isbn), author_(author)
 {
 
 }

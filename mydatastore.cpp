@@ -1,7 +1,7 @@
 #include "mydatastore.h"
 
 //constructor
-MyDataStore::MyDataStore()
+MyDataStore::MyDataStore() 
 {
 
 }
@@ -15,7 +15,7 @@ void MyDataStore::addProduct(Product* p)
 
   std::set<std::string> productKeywords = p->keywords();
   std::set<std::string>:: iterator it;
-  for(it=productKeywords.begin(); it!=productKeywords.end(); it++)
+  for(it=productKeywords.begin(); it!=productKeywords.end(); ++it)
   {
     if(keywordMap.find(*it) == keywordMap.end())   //if keyword doesn't exists in map
     {
@@ -91,15 +91,6 @@ std::vector<Product*> MyDataStore::search(std::vector<std::string>& terms, int t
   std::vector<Product*> returnProducts(foundProducts.begin(), foundProducts.end()); //the vector that function will return
   return returnProducts;
 
-  //iterate through foundProducts and insert into vector
-  //std::set<Product*>::iterator it2;      
-  //for(it2 = foundProducts.begin(); it2 != foundProducts.end(); ++it2) 
-  //{
-  //  returnProducts.push_back(*it2);  //push back each item into returnProducts vector
-  //}
-
-  //return returnProducts;
-
 }
 
 /**
@@ -108,22 +99,33 @@ std::vector<Product*> MyDataStore::search(std::vector<std::string>& terms, int t
 void MyDataStore::dump(std::ostream& ofile)
 {
   ofile << "<products> \n";
-  std::set<Product*>::iterator it;      //create iterator for products
-  for(it = productSet.begin(); it != productSet.end(); ++it)  
+
+  if(!productSet.empty())
   {
-    (*it)->dump(ofile);     //iterate through productSet and dump each Product (virtual??)
+    for(std::set<Product*>::iterator it = productSet.begin(); 
+        it != productSet.end(); ++it)  
+    {
+      (*it)->dump(ofile);     //iterate through productSet and dump each Product (virtual??)
+      delete *it;
+    }
   }
+  
   ofile << "</products> \n" ;
 
   ofile << "<users> \n" ;
-  std::set<User*>::iterator it2;     //create iterator for users
-  for(it2 == userSet.begin(); it2 != userSet.end(); ++it2)
-  {
-    (*it2)->dump(ofile);      //iterate through userSet and dump each User
+  
+  if(!userSet.empty())
+  {          
+    for(std::set<User*>::iterator it2 = userSet.begin(); 
+      it2 != userSet.end(); ++it2)
+    {
+      (*it2)->dump(ofile);      //iterate through userSet and dump each User
+      delete *it2;
+    }
   }
+  
   ofile << "</users> \n" ;
 
-  //how do I use ofile?
 }
 
 //add to cart, uses hit index
@@ -160,7 +162,7 @@ std::vector<Product*> MyDataStore::viewCart(std::string username)
   //1st step: make sure username matches with a user in set userSet
   User* currentUser;  //create User pointer
   std::set<User*>:: iterator it;  //iterate through set userSet to find user
-  for(it = userSet.begin(); it!=userSet.end(); it++)
+  for(it = userSet.begin(); it!=userSet.end(); ++it)
   {
     if(username== (*it)->getName())  //if string username matches a name from userSet
     {
@@ -175,7 +177,7 @@ std::vector<Product*> MyDataStore::viewCart(std::string username)
   std::vector<Product*> displayVector;
   std::deque<Product*> currentUserProducts=userCart[currentUser];  
   std::deque<Product*>:: iterator it2;
-  for(it2 = currentUserProducts.begin(); it2 != currentUserProducts.end(); it2++)
+  for(it2 = currentUserProducts.begin(); it2 != currentUserProducts.end(); ++it2)
   {
     //push into vector
     displayVector.push_back(*it2);
@@ -217,4 +219,24 @@ void MyDataStore::buyCart(std::string username)
     // then leave in cart, go to next product
     
   }
+}
+
+bool MyDataStore::userExists(std::string username)
+{
+  bool userDoesExist=0;
+
+  User* currentUser;  //create User pointer
+  std::set<User*>:: iterator it;  //iterate through set userSet to find user
+  for(it = userSet.begin(); it!=userSet.end(); ++it)
+  {
+    if(username== (*it)->getName())  //if string username matches a name from userSet
+    {
+      currentUser=*it;  //set the currentUser to *it, we will use that to push a product
+      userDoesExist=1;
+      break;  //break bc we found the user
+    }
+  }
+  //now user is found in userSet
+
+  return userDoesExist;
 }

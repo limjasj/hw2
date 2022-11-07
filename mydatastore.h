@@ -41,6 +41,8 @@ class MyDataStore : public DataStore{
     //buy cart
     void buyCart(std::string username);
 
+    bool userExists(std::string username);
+
   private:
   //set of products
     std::set<Product*> productSet;

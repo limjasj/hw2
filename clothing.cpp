@@ -1,8 +1,8 @@
 #include "clothing.h"
 
 Clothing::Clothing(const std::string category, const std::string name, double price, int qty, std::string size, std::string brand): 
-  size_(size), brand_(brand),
-  Product(category, name, price, qty)
+  Product(category, name, price, qty),
+  size_(size), brand_(brand)
 {
 
 }
@@ -13,7 +13,7 @@ Clothing::Clothing(const std::string category, const std::string name, double pr
 std::set<std::string> Clothing::keywords() const
 {
   std::set<std::string> keyWords = parseStringToWords(name_);   //make title into separate words, put in new set
-  keyWords.insert(size_);           //add size to set
+  keyWords.insert(convToLower(size_));           //add size to set
   std::set<std::string> brandName = parseStringToWords(brand_);   //create set brandName, make it have brand words
   for(std::set<std::string>::iterator it=brandName.begin(); it != brandName.end(); ++it) //iterate through brandName
   {
